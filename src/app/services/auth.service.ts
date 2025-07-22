@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError } from 'rxjs';
-import { environment } from '../../environments/environment';
+
+const API_URL = "https://staj-proje-production.up.railway.app/api/auth";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/auth';
   private loginStatusKey = 'isLoggedIn';
 
   constructor(private http: HttpClient) {}
 
   getCsrfToken(): Observable<any> {
-    return this.http.get(environment.apiUrl + '/csrf', {
+    return this.http.get("https://staj-proje-production.up.railway.app/api/csrf", {
       withCredentials: true,
       observe: 'response'
     }).pipe(
@@ -23,7 +23,7 @@ export class AuthService {
 
   login(email: string, sifre: string): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/giris`,
+      `${API_URL}/giris`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   cikisYap(): void {
-    this.http.post(`${this.apiUrl}/cikis`, {}, { withCredentials: true })
+    this.http.post(`${API_URL}/cikis`, {}, { withCredentials: true })
       .subscribe({
         next: () => localStorage.removeItem(this.loginStatusKey),
         error: () => localStorage.removeItem(this.loginStatusKey)
@@ -49,7 +49,7 @@ export class AuthService {
 
   register(email: string, sifre: string): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/kayit`,
+      `${API_URL}/kayit`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
@@ -63,7 +63,7 @@ export class AuthService {
 
   forgotPassword(email: string) {
     return this.http.post<{ message: string }>(
-      `${this.apiUrl}/sifremi-unuttum`,
+      `${API_URL}/sifremi-unuttum`,
       { email },
       { withCredentials: true }
     );
@@ -71,7 +71,7 @@ export class AuthService {
 
   resetPassword(anahtar: string, yeniSifre: string) {
     return this.http.post<{ message: string }>(
-      `${this.apiUrl}/sifre-sifirla`,
+      `${API_URL}/sifre-sifirla`,
       { anahtar, yeniSifre },
       { withCredentials: true }
     );
