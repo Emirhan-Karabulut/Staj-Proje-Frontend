@@ -43,7 +43,8 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/Staj-Proje/"
+              "baseHref": "/Staj-Proje/",
+              "outputPath": "dist/staj-proje-Frontend"
             },
             "development": {
               "optimization": false,
