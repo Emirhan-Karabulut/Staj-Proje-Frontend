@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { AuthResponse, AuthErrorResponse } from '../models/auth-response.model';
-import {environment} from '../../environment';
+import { AuthResponse } from '../models/auth-response.model';
+import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`; // Sadece bu olmalı
+  private apiUrl = environment.apiUrl + '/auth';
   private loginStatusKey = 'isLoggedIn';
 
   constructor(private http: HttpClient) {}
 
-  /** CSRF token oluşturmak için sade endpoint */
   getCsrfToken(): Observable<any> {
-    return this.http.get('http://localhost:8080/api/csrf', {
+    return this.http.get(`${environment.apiUrl}/csrf`, {
       withCredentials: true,
       observe: 'response'
     }).pipe(
@@ -47,14 +44,10 @@ export class AuthService {
   }
 
   cikisYap(): void {
-    this.http.post('http://localhost:8080/api/auth/cikis', {}, { withCredentials: true })
+    this.http.post(`${this.apiUrl}/cikis`, {}, { withCredentials: true })
       .subscribe({
-        next: () => {
-          localStorage.removeItem(this.loginStatusKey);
-        },
-        error: () => {
-          localStorage.removeItem(this.loginStatusKey);
-        }
+        next: () => localStorage.removeItem(this.loginStatusKey),
+        error: () => localStorage.removeItem(this.loginStatusKey)
       });
   }
 
@@ -76,7 +69,7 @@ export class AuthService {
 
   forgotPassword(email: string) {
     return this.http.post<{message: string}>(
-      'http://localhost:8080/api/auth/sifremi-unuttum',
+      `${this.apiUrl}/sifremi-unuttum`,
       { email },
       { withCredentials: true }
     );
@@ -84,7 +77,7 @@ export class AuthService {
 
   resetPassword(anahtar: string, yeniSifre: string) {
     return this.http.post<{message: string}>(
-      'http://localhost:8080/api/auth/sifre-sifirla',
+      `${this.apiUrl}/sifre-sifirla`,
       { anahtar, yeniSifre },
       { withCredentials: true }
     );

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Bolum } from '../models/bolum.model';
 import { Isci } from '../models/isci.model';
 import { BolumIstatistik } from '../models/istatistik.model';
-import {environment} from '../../environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class IsciService {
