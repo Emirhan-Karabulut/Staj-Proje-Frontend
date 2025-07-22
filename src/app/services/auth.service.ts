@@ -16,8 +16,7 @@ export class AuthService {
   /** CSRF token oluşturmak için sade endpoint */
   getCsrfToken(): Observable<any> {
     return this.http.get('https://staj-proje-production.up.railway.app/api/csrf', {
-      withCredentials: true,
-      observe: 'response'
+      withCredentials: true
     }).pipe(
       tap(response => {
         console.log('CSRF token isteği başarılı:', response);
@@ -38,7 +37,7 @@ export class AuthService {
           localStorage.setItem(this.loginStatusKey, 'true');
         }
       }),
-      catchError(error => {
+      catchError((error: any) => {
         console.error('Login hatası:', error);
         throw error;
       })
@@ -66,7 +65,7 @@ export class AuthService {
       tap((response: any) => {
         console.log('Kayıt işlemi başarılı:', response);
       }),
-      catchError(error => {
+      catchError((error: any) => {
         console.error('Register hatası:', error);
         throw error;
       })
