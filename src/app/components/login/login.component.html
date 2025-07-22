@@ -1,0 +1,42 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Giriş Yap</h2>
+    <form (ngSubmit)="girisYap()" #loginForm="ngForm">
+      <div class="form-group">
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          placeholder="E-posta"
+          required
+          #emailInput="ngModel"
+          class="form-control"
+          [class.error]="emailInput.invalid && emailInput.touched">
+      </div>
+      <div class="form-group">
+        <input
+          [(ngModel)]="sifre"
+          name="sifre"
+          type="password"
+          placeholder="Şifre"
+          required
+          #sifreInput="ngModel"
+          class="form-control"
+          [class.error]="sifreInput.invalid && sifreInput.touched">
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+        Giriş Yap
+      </button>
+    </form>
+    @if (hata) {
+      <div class="error-message">
+        <i class="error-icon">⚠️</i>
+        {{ hata }}
+      </div>
+    }
+    <div class="register-link">
+      <p>Hesabınız yok mu? <a routerLink="/kayit">Kayıt Ol</a></p>
+      <p><a routerLink="/sifremi-unuttum" class="forgot-password-link">Şifremi Unuttum?</a></p>
+    </div>
+  </div>
+</div>

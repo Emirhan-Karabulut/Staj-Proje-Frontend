@@ -1,0 +1,109 @@
+<!-- Spinner Overlay -->
+<div [style.display]="isLoading ? 'flex' : 'none'" class="loading-spinner">
+  <div class="spinner"></div>
+</div>
+
+<!-- Ana konteyner, yükleme sırasında flu olacak -->
+<div class="container" [class.blurred]="isLoading">
+  <!-- İki sütunlu düzen için ana konteyner -->
+  <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+    <button (click)="cikisYap()">Çıkış Yap</button>
+  </div>
+
+  <!-- Hata ve başarı mesajları -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div class="page-layout">
+    <!-- SOL SÜTUN: Form ve İşçi Listesi -->
+    <div class="left-column">
+      <!-- İŞÇİ KAYIT/DÜZENLEME FORMU -->
+      <h2>{{ duzenlemeModu ? 'İşçi Düzenle' : 'İşçi Ekle' }}</h2>
+      <form (ngSubmit)="ekle()">
+        <input [(ngModel)]="yeniIsci.isim" name="isim" placeholder="İsim" required>
+        <input [(ngModel)]="yeniIsci.soyisim" name="soyisim" placeholder="Soyisim" required>
+        <select [(ngModel)]="yeniIsci.bolum" name="bolum" required>
+          <option [ngValue]="undefined" disabled selected>Bölüm seçin</option>
+          @for (bolum of bolumler; track bolum.id) {
+            <option [ngValue]="bolum">{{ bolum.bolumAdi }}</option>
+          }
+        </select>
+        <input [(ngModel)]="yeniIsci.tcKimlikNo" name="tcKimlikNo" placeholder="TC Kimlik No"
+               required maxlength="11" [disabled]="duzenlemeModu">
+        @if (duzenlemeModu) {
+          <div class="form-note">TC Kimlik No güncellenemez.</div>
+        }
+        <input type="date" [(ngModel)]="yeniIsci.dogumTarihi" name="dogumTarihi" placeholder="Doğum Tarihi" required>
+
+        <div class="button-group">
+          <button type="submit">{{ duzenlemeModu ? 'Güncelle' : 'Ekle' }}</button>
+          @if (duzenlemeModu) {
+            <button type="button" class="iptal-btn" (click)="iptal()">İptal</button>
+          }
+        </div>
+      </form>
+
+      <!-- İŞÇİ LİSTESİ -->
+      <h2>Tüm İşçiler</h2>
+      <div class="isci-liste-konteyner">
+        <ul>
+          @for (i of isciler; track i.id) {
+            <li>
+              <div class="isci-bilgi">
+                <strong>{{i.isim}} {{i.soyisim}}</strong>
+                ({{ getBolumAdi(i.bolum) }})
+                <div class="isci-detay">
+                  TC: {{i.tcKimlikNo}} | Doğum: {{i.dogumTarihi}}
+                </div>
+              </div>
+              <div class="isci-islem">
+                <button class="duzenle-btn" (click)="duzenle(i)">Düzenle</button>
+                <button class="sil-btn" (click)="sil(i.id!)">Sil</button>
+              </div>
+            </li>
+          }
+          @empty {
+            <li style="text-align: center; color: #777">Henüz hiç işçi eklenmemiş.</li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- SAĞ SÜTUN: Bölüm İstatistikleri -->
+    <div class="right-column">
+      <h2>Bölüm İstatistikleri</h2>
+      @if (getBolumler().length > 0) {
+        <ul class="istatistikler">
+          @for (bolum of getBolumler(); track bolum) {
+            <li>
+              <div class="isci-bilgi">
+                <strong>{{ bolum }}</strong>
+                <div class="isci-detay">
+                  İşçi Sayısı: {{ istatistikler[bolum] }}
+                  <div class="progress-bar" style="margin-top: 5px; height: 10px; background-color: #eee; border-radius: 5px; overflow: hidden;">
+                    <div [style.height.%]="100"
+                         [style.background-color]="'var(--primary-color)'"
+                         [style.width.%]="getIsciYuzdesi(bolum)"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="isci-islem">
+                <span>{{ getIsciYuzdesi(bolum).toFixed(1) }}%</span>
+              </div>
+            </li>
+          }
+          <li style="background-color: rgba(52, 152, 219, 0.1);">
+            <div class="isci-bilgi">
+              <strong>Toplam</strong>
+            </div>
+            <div class="isci-islem">
+              <strong>{{ getTotalIsciSayisi() }} işçi</strong>
+            </div>
+          </li>
+        </ul>
+      } @else {
+        <p style="text-align: center; color: #777">Henüz işçi bulunmamaktadır.</p>
+      }
+
+    </div>
+  </div>
+</div>

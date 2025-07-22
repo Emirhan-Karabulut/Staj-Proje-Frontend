@@ -1,0 +1,94 @@
+<div class="register-container">
+  <div class="register-box">
+    <h2>Kayıt Ol</h2>
+    <form (ngSubmit)="kayitOl()" #registerForm="ngForm">
+      <div class="form-group">
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          placeholder="E-posta"
+          required
+          minlength="3"
+          maxlength="64"
+          #emailInput="ngModel"
+          class="form-control"
+          [class.error]="emailInput.invalid && emailInput.touched">
+        @if (emailInput.invalid && emailInput.touched) {
+          <div class="field-error">
+            @if (emailInput.errors?.['required']) {
+              <span>E-posta zorunludur</span>
+            }
+            @if (emailInput.errors?.['minlength']) {
+              <span>En az 3 karakter olmalıdır</span>
+            }
+            @if (emailInput.errors?.['maxlength']) {
+              <span>En fazla 64 karakter olabilir</span>
+            }
+            @if (emailInput.errors?.['email']) {
+              <span>Geçerli bir e-posta adresi giriniz</span>
+            }
+          </div>
+        }
+      </div>
+      <div class="form-group">
+        <input
+          [(ngModel)]="sifre"
+          name="sifre"
+          type="password"
+          placeholder="Şifre"
+          required
+          minlength="6"
+          #sifreInput="ngModel"
+          class="form-control"
+          [class.error]="sifreInput.invalid && sifreInput.touched">
+        @if (sifreInput.invalid && sifreInput.touched) {
+          <div class="field-error">
+            @if (sifreInput.errors?.['required']) {
+              <span>Şifre zorunludur</span>
+            }
+            @if (sifreInput.errors?.['minlength']) {
+              <span>En az 6 karakter olmalıdır</span>
+            }
+          </div>
+        }
+      </div>
+      <div class="form-group">
+        <input
+          [(ngModel)]="tekrarSifre"
+          name="tekrarSifre"
+          type="password"
+          placeholder="Şifre (Tekrar)"
+          required
+          #tekrarSifreInput="ngModel"
+          class="form-control"
+          [class.error]="tekrarSifreInput.invalid && tekrarSifreInput.touched">
+        @if (tekrarSifreInput.invalid && tekrarSifreInput.touched) {
+          <div class="field-error">
+            @if (tekrarSifreInput.errors?.['required']) {
+              <span>Şifre tekrarı zorunludur</span>
+            }
+          </div>
+        }
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+        Kayıt Ol
+      </button>
+    </form>
+    @if (hata) {
+      <div class="error-message">
+        <i class="error-icon">⚠️</i>
+        {{ hata }}
+      </div>
+    }
+    @if (basarili) {
+      <div class="success-message">
+        <i class="success-icon">✅</i>
+        {{ basarili }}
+      </div>
+    }
+    <div class="login-link">
+      <p>Zaten hesabınız var mı? <a routerLink="/giris">Giriş Yap</a></p>
+    </div>
+  </div>
+</div>
