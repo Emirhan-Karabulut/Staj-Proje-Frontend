@@ -4,13 +4,15 @@ import { Observable } from 'rxjs';
 import { Bolum } from '../models/bolum.model';
 import { Isci } from '../models/isci.model';
 import { BolumIstatistik } from '../models/istatistik.model';
-import { environment } from '../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class IsciService {
-  private apiUrl = `${environment.apiUrl}/isciler`;
-  private istatistikUrl = `${environment.apiUrl}/istatistikler`;
-  private bolumlerUrl = `${environment.apiUrl}/bolumler`;
+  private apiUrl = 'https://staj-proje-production.up.railway.app/api/isciler';
+
+  private istatistikUrl = 'https://staj-proje-production.up.railway.app/api/istatistikler';
+  private bolumlerUrl = 'https://staj-proje-production.up.railway.app/api/bolumler';
 
   constructor(private http: HttpClient) {}
 

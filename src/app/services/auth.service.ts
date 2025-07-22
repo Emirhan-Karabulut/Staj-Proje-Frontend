@@ -3,17 +3,19 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { AuthResponse } from '../models/auth-response.model';
-import { environment } from '../../environments/environment';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/auth';
+  private apiUrl = 'https://staj-proje-production.up.railway.app/api/auth';
   private loginStatusKey = 'isLoggedIn';
 
   constructor(private http: HttpClient) {}
 
+  /** CSRF token oluşturmak için sade endpoint */
   getCsrfToken(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/csrf`, {
+    return this.http.get('https://staj-proje-production.up.railway.app/api/csrf', {
       withCredentials: true,
       observe: 'response'
     }).pipe(
@@ -44,10 +46,14 @@ export class AuthService {
   }
 
   cikisYap(): void {
-    this.http.post(`${this.apiUrl}/cikis`, {}, { withCredentials: true })
+    this.http.post('https://staj-proje-production.up.railway.app/api/auth/cikis', {}, { withCredentials: true })
       .subscribe({
-        next: () => localStorage.removeItem(this.loginStatusKey),
-        error: () => localStorage.removeItem(this.loginStatusKey)
+        next: () => {
+          localStorage.removeItem(this.loginStatusKey);
+        },
+        error: () => {
+          localStorage.removeItem(this.loginStatusKey);
+        }
       });
   }
 
@@ -69,7 +75,7 @@ export class AuthService {
 
   forgotPassword(email: string) {
     return this.http.post<{message: string}>(
-      `${this.apiUrl}/sifremi-unuttum`,
+      'https://staj-proje-production.up.railway.app/api/auth/sifremi-unuttum',
       { email },
       { withCredentials: true }
     );
@@ -77,7 +83,7 @@ export class AuthService {
 
   resetPassword(anahtar: string, yeniSifre: string) {
     return this.http.post<{message: string}>(
-      `${this.apiUrl}/sifre-sifirla`,
+      'https://staj-proje-production.up.railway.app/api/auth/sifre-sifirla',
       { anahtar, yeniSifre },
       { withCredentials: true }
     );
