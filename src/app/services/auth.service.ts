@@ -27,13 +27,13 @@ export class AuthService {
     );
   }
 
-  login(email: string, sifre: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
+  login(email: string, sifre: string): Observable<any> {
+    return this.http.post(
       `${this.apiUrl}/giris`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
-      tap(response => {
+      tap((response: any) => {
         if (response.message === "Giriş başarılı!") {
           localStorage.setItem(this.loginStatusKey, 'true');
         }
@@ -57,13 +57,13 @@ export class AuthService {
       });
   }
 
-  register(email: string, sifre: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
+  register(email: string, sifre: string): Observable<any> {
+    return this.http.post(
       `${this.apiUrl}/kayit`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
-      tap(response => {
+      tap((response: any) => {
         console.log('Kayıt işlemi başarılı:', response);
       }),
       catchError(error => {
