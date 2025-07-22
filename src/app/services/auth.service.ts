@@ -1,43 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { AuthResponse } from '../models/auth-response.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, catchError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://staj-proje-production.up.railway.app/api/auth';
+  private apiUrl = environment.apiUrl + '/auth';
   private loginStatusKey = 'isLoggedIn';
 
   constructor(private http: HttpClient) {}
 
-  /** CSRF token oluşturmak için sade endpoint */
   getCsrfToken(): Observable<any> {
-    return this.http.get('https://staj-proje-production.up.railway.app/api/csrf', {
-      withCredentials: true
+    return this.http.get(environment.apiUrl + '/csrf', {
+      withCredentials: true,
+      observe: 'response'
     }).pipe(
-      tap(response => {
-        console.log('CSRF token isteği başarılı:', response);
-        const cookies = document.cookie;
-        console.log('Mevcut cookies:', cookies);
-      })
+      tap(response => console.log('CSRF token isteği başarılı:', response))
     );
   }
 
   login(email: string, sifre: string): Observable<any> {
-    return this.http.post(
+    return this.http.post<any>(
       `${this.apiUrl}/giris`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
-      tap((response: any) => {
+      tap(response => {
         if (response.message === "Giriş başarılı!") {
           localStorage.setItem(this.loginStatusKey, 'true');
         }
       }),
-      catchError((error: any) => {
+      catchError(error => {
         console.error('Login hatası:', error);
         throw error;
       })
@@ -45,27 +40,21 @@ export class AuthService {
   }
 
   cikisYap(): void {
-    this.http.post('https://staj-proje-production.up.railway.app/api/auth/cikis', {}, { withCredentials: true })
+    this.http.post(`${this.apiUrl}/cikis`, {}, { withCredentials: true })
       .subscribe({
-        next: () => {
-          localStorage.removeItem(this.loginStatusKey);
-        },
-        error: () => {
-          localStorage.removeItem(this.loginStatusKey);
-        }
+        next: () => localStorage.removeItem(this.loginStatusKey),
+        error: () => localStorage.removeItem(this.loginStatusKey)
       });
   }
 
   register(email: string, sifre: string): Observable<any> {
-    return this.http.post(
+    return this.http.post<any>(
       `${this.apiUrl}/kayit`,
       { email, sifre },
       { withCredentials: true }
     ).pipe(
-      tap((response: any) => {
-        console.log('Kayıt işlemi başarılı:', response);
-      }),
-      catchError((error: any) => {
+      tap(response => console.log('Kayıt işlemi başarılı:', response)),
+      catchError(error => {
         console.error('Register hatası:', error);
         throw error;
       })
@@ -73,16 +62,16 @@ export class AuthService {
   }
 
   forgotPassword(email: string) {
-    return this.http.post<{message: string}>(
-      'https://staj-proje-production.up.railway.app/api/auth/sifremi-unuttum',
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/sifremi-unuttum`,
       { email },
       { withCredentials: true }
     );
   }
 
   resetPassword(anahtar: string, yeniSifre: string) {
-    return this.http.post<{message: string}>(
-      'https://staj-proje-production.up.railway.app/api/auth/sifre-sifirla',
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/sifre-sifirla`,
       { anahtar, yeniSifre },
       { withCredentials: true }
     );
